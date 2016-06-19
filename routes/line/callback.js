@@ -4,6 +4,7 @@ var crypto = require('crypto');
 var router = express.Router();
 
 var config = require('../../config/config')[process.env.NODE_ENV];
+var ReplyGenerator = require('../../model/ReplyGenerator');
 
 router.post('/', function(req, res, next) {
 
@@ -21,25 +22,7 @@ router.post('/', function(req, res, next) {
     'X-Line-Trusted-User-With-ACL' : config.line.mid
   };
 
-  // 送信相手を設定
-  var sendTo = [];
-  sendTo.push(reqJson['result'][0]['content']['from']);
-
-  // 送信データ作成
-  var data = {
-    'to': sendTo,
-    'toChannel': 1383378250, //Bot API Server の channelId (固定値)
-    'eventType':'140177271400161403', //固定値
-    "content": {
-      "messageNotified": 0,
-      "messages": [
-        {
-          "contentType": 1,
-          "text": 'オハヨウゴジャイマース',
-        }
-      ]
-    }
-  };
+  var data = (new ReplyGenerator()).generate(reqJson['result'])[0];
 
   // リクエストを送るためのoption定義
   var options = {
