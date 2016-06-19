@@ -51,9 +51,11 @@ router.post('/', function(req, res, next) {
 
   request.post(options, function (error, response, body) {
     if (!error && response.statusCode == 200) {
-      console.log(body);
+      res.status(200);
+      res.send();
     } else {
-      console.log('error: '+ JSON.stringify(response));
+      res.status(response.statusCode);
+      res.send();
     }
   });
 
