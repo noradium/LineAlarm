@@ -1,4 +1,5 @@
-var ReplyGenerator = function() {
+var ReplyGenerator = function(replyRules) {
+    this.replyRules = replyRules;
 };
 
 /**
@@ -28,28 +29,41 @@ var ReplyGenerator = function() {
  *  @return replyMessages
  */
 ReplyGenerator.prototype.generate = function (receivedMessages) {
+    var replyData = [];
 
     // 送信相手を設定
     var sendTo = [];
     sendTo.push(receivedMessages[0]['content']['from']);
 
-    // 送信データ作成
-    var data = {
-        'to': sendTo,
-        'toChannel': 1383378250, //Bot API Server の channelId (固定値)
-        'eventType':'140177271400161403', //固定値
-        "content": {
-            "messageNotified": 0,
-            "messages": [
-                {
-                    "contentType": 1,
-                    "text": 'オハヨウゴジャイマース\n' + receivedMessages[0]['content']['text'],
-                }
-            ]
-        }
-    };
+    var receivedText = receivedMessages[0]['content']['text'];
 
-    return [data];
+    // replyRules を順に見てマッチするものがあるか調べる
+    for (var i in this.replyRules) {
+        var rule = this.replyRules[i];
+
+        var matched = receivedText.match(rule.regExp);
+        if (matched) {
+            // 送信データ作成
+            var data = {
+                'to': sendTo,
+                'toChannel': 1383378250, //Bot API Server の channelId (固定値)
+                'eventType':'140177271400161403', //固定値
+                "content": {
+                    "messageNotified": 0,
+                    "messages": [
+                        {
+                            "contentType": 1,
+                            "text": rule.func(receivedText),
+                        }
+                    ]
+                }
+            };
+            replyData.push(data);
+            break;
+        }
+    }
+
+    return replyData;
 };
 
 module.exports = ReplyGenerator;

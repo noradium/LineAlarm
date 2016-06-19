@@ -5,6 +5,7 @@ var router = express.Router();
 
 var config = require('../../config/config')[process.env.NODE_ENV];
 var ReplyGenerator = require('../../model/ReplyGenerator');
+var replyRules = require('../../config/replyRules');
 
 router.post('/', function(req, res, next) {
 
@@ -22,24 +23,33 @@ router.post('/', function(req, res, next) {
     'X-Line-Trusted-User-With-ACL' : config.line.mid
   };
 
-  var data = (new ReplyGenerator()).generate(reqJson['result'])[0];
+  var replyMessages = (new ReplyGenerator(replyRules)).generate(reqJson['result']);
 
-  // リクエストを送るためのoption定義
-  var options = {
-    url: 'https://trialbot-api.line.me/v1/events',
-    headers: headers,
-    json: true,
-    body: data
-  };
+  // リプライ内容がなければ200を返して終了
+  if (replyMessages.length === 0) {
+    res.status(200);
+    res.send();
+    res.end();
+  }
 
-  request.post(options, function (error, response, body) {
-    if (!error && response.statusCode == 200) {
-      res.status(200);
-      res.send();
-    } else {
-      res.status(response.statusCode);
-      res.send();
-    }
+  replyMessages.forEach(function (replyMessage) {
+    // リクエストを送るためのoption定義
+    var options = {
+      url: 'https://trialbot-api.line.me/v1/events',
+      headers: headers,
+      json: true,
+      body: replyMessage
+    };
+
+    request.post(options, function (error, response, body) {
+      if (!error && response.statusCode == 200) {
+        res.status(200);
+        res.send();
+      } else {
+        res.status(response.statusCode);
+        res.send();
+      }
+    });
   });
 
 });
