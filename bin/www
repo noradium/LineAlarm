@@ -29,6 +29,7 @@ var server = http.createServer(app);
  */
 var sslParams = {
   key: fs.readFileSync(config.ssl.key),
+  passphrase: config.ssl.passphrase,
   cert: fs.readFileSync(config.ssl.cert),
   ca: fs.readFileSync(config.ssl.ca)
 };

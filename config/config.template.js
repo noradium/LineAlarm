@@ -3,6 +3,7 @@ var config = {
         port: '**PORT**',
         ssl: {
             key: '../cert/server.key',
+            passphrase: '**PASSPHRASE**',
             cert: '../cert/server.crt',
             ca: '../cert/ca.crt'
         }
