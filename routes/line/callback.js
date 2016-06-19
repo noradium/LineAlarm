@@ -11,7 +11,7 @@ router.post('/', function(req, res, next) {
     return next(new Error('Invalid request.'));
   }
 
-  var reqJson = req.body;
+  var reqJson = JSON.parse(req.body.toString('utf8'));
 
   //ヘッダーを定義
   var headers = {
