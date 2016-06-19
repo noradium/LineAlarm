@@ -1,10 +1,16 @@
 var express = require('express');
 var request = require('request');
+var crypto = require('crypto');
 var router = express.Router();
 
 var config = require('../../config/config')[process.env.NODE_ENV];
 
 router.post('/', function(req, res, next) {
+
+  if (!_checkSignature(req.header('X-LINE-ChannelSignature'), req.body)) {
+    return next(new Error('Invalid request.'));
+  }
+
   var reqJson = req.body;
 
   //ヘッダーを定義
@@ -52,5 +58,13 @@ router.post('/', function(req, res, next) {
   });
 
 });
+
+function _checkSignature(signature, body) {
+  const hmac = crypto.createHmac('sha256', config.line.channelSecret);
+  hmac.update(body);
+  const calcResult = hmac.digest('base64');
+  return ( calcResult === signature );
+}
+
 
 module.exports = router;
