@@ -1,6 +1,7 @@
 var assert = require('power-assert');
 var ReplyGenerator = require('../model/ReplyGenerator');
-var replyRules = require('../config/replyRules');
+var ReplyRules = require('../model/ReplyRules');
+var replyRules = (new ReplyRules()).rules();
 
 describe('ReplyRules', function () {
     beforeEach(function () {

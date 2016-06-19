@@ -5,7 +5,8 @@ var router = express.Router();
 
 var config = require('../../config/config')[process.env.NODE_ENV];
 var ReplyGenerator = require('../../model/ReplyGenerator');
-var replyRules = require('../../config/replyRules');
+var ReplyRules = require('../../model/ReplyRules');
+var replyRules = (new ReplyRules()).rules();
 
 router.post('/', function(req, res, next) {
 
