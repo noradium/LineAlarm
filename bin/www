@@ -7,6 +7,8 @@
 var app = require('../app');
 var debug = require('debug')('LineAlarm:server');
 var http = require('http');
+var fs = require('fs');
+var https = require('https');
 
 var config = require('../config/config')[process.env.NODE_ENV];
 
@@ -20,8 +22,17 @@ app.set('port', port);
 /**
  * Create HTTP server.
  */
-
 var server = http.createServer(app);
+
+/**
+ * Create HTTPS server, and override server.
+ */
+var sslParams = {
+  key: fs.readFileSync(config.ssl.key),
+  cert: fs.readFileSync(config.ssl.cert),
+  ca: fs.readFileSync(config.ssl.ca)
+};
+server = https.createServer(sslParams, app);
 
 /**
  * Listen on provided port, on all network interfaces.
