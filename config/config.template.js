@@ -6,6 +6,11 @@ var config = {
             passphrase: '**PASSPHRASE**',
             cert: '../cert/server.crt',
             ca: '../cert/ca.crt'
+        },
+        line: {
+            channelId: '**CHANNEL_ID**',
+            channelSecret: '**CHANNEL_SECRET**',
+            mid: '**MID**'
         }
     },
     dev: {
