@@ -1,4 +1,4 @@
-var config = {
+const config = {
     prod: {
         port: '**PORT**',
         ssl: {
