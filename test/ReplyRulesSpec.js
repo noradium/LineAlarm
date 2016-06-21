@@ -1,23 +1,24 @@
-var assert = require('power-assert');
-var ReplyGenerator = require('../model/ReplyGenerator');
-var ReplyRules = require('../model/ReplyRules');
-var replyRules = (new ReplyRules()).rules();
+"use strict";
+const assert = require('power-assert');
+const ReplyGenerator = require('../model/ReplyGenerator');
+const ReplyRules = require('../model/ReplyRules');
+const replyRules = (new ReplyRules()).rules();
 
-describe('ReplyRules', function () {
-    beforeEach(function () {
+describe('ReplyRules', () => {
+    beforeEach(() => {
         this.replyGenerator = new ReplyGenerator(replyRules);
     });
 
-    describe('固定返信', function () {
-        it('「おはよう」に反応して返事を返す', function () {
-            var receivedMessages = [{
+    describe('固定返信', () => {
+        it('「おはよう」に反応して返事を返す', () => {
+            const receivedMessages = [{
                 "content": {
                     "from": "alice",
                     "text": "おはようー"
                 }
             }];
 
-            var data = this.replyGenerator.generate(receivedMessages);
+            const data = this.replyGenerator.generate(receivedMessages);
 
             assert(data[0].to[0] === 'alice');
             assert(data[0].content.messages[0].text === 'オハヨウゴジャイマース');
