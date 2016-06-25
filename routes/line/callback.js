@@ -56,6 +56,10 @@ router.post('/', (req, res, next) => {
 });
 
 function _isValidSignature(signature, body) {
+  // 本番環境以外ではチェックせず全てtrueを返す
+  if (process.env.NODE_ENV !== 'prod') {
+    return true;
+  }
   let hmac = crypto.createHmac('sha256', config.line.channelSecret);
   hmac.update(body);
   const calcResult = hmac.digest('base64');

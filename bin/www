@@ -25,15 +25,17 @@ app.set('port', port);
 let server = http.createServer(app);
 
 /**
- * Create HTTPS server, and override server.
+ * Create HTTPS server, and override server. (only production server)
  */
-const sslParams = {
-  key: fs.readFileSync(config.ssl.key),
-  passphrase: config.ssl.passphrase,
-  cert: fs.readFileSync(config.ssl.cert),
-  ca: fs.readFileSync(config.ssl.ca)
-};
-server = https.createServer(sslParams, app);
+if (process.env.NODE_ENV === 'prod') {
+  const sslParams = {
+    key: fs.readFileSync(config.ssl.key),
+    passphrase: config.ssl.passphrase,
+    cert: fs.readFileSync(config.ssl.cert),
+    ca: fs.readFileSync(config.ssl.ca)
+  };
+  server = https.createServer(sslParams, app);
+}
 
 /**
  * Listen on provided port, on all network interfaces.
