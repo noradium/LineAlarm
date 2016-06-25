@@ -5,8 +5,9 @@ const crypto = require('crypto');
 const router = express.Router();
 
 const config = require('../../config/config')[process.env.NODE_ENV];
-const ReplyGenerator = require('../../model/ReplyGenerator');
-const ReplyRules = require('../../model/ReplyRules');
+const ReplyGenerator = require('../../lib/model/ReplyGenerator');
+const ReplyRules = require('../../lib/model/ReplyRules');
+const LineBotAPI = require('../../lib/api/LineBotAPI');
 const replyRules = (new ReplyRules()).rules();
 
 router.post('/', (req, res, next) => {
@@ -16,14 +17,6 @@ router.post('/', (req, res, next) => {
   }
 
   const reqJson = JSON.parse(req.body.toString('utf8'));
-
-  //ヘッダーを定義
-  const headers = {
-    'Content-Type' : 'application/json; charset=UTF-8',
-    'X-Line-ChannelID' : config.line.channelId,
-    'X-Line-ChannelSecret' : config.line.channelSecret,
-    'X-Line-Trusted-User-With-ACL' : config.line.mid
-  };
 
   const replyMessages = (new ReplyGenerator(replyRules)).generate(reqJson['result']);
 
@@ -35,24 +28,14 @@ router.post('/', (req, res, next) => {
   }
 
   replyMessages.forEach((replyMessage) => {
-    // リクエストを送るためのoption定義
-    const options = {
-      url: 'https://trialbot-api.line.me/v1/events',
-      headers: headers,
-      json: true,
-      body: replyMessage
-    };
-
-    request.post(options, (error, response, body) => {
-      if (!error && response.statusCode === 200) {
-        res.status(200);
-        res.send();
-      } else {
-        res.status(response.statusCode);
-        res.send();
-      }
+    LineBotAPI.events(replyMessage, (error, response, body) => {
+      // callback で特にやることはない
     });
   });
+
+  //TODO: LineBotAPI のレスポンス待つ必要はないので、その辺なんとかする
+  res.status(200);
+  res.send();
 });
 
 function _isValidSignature(signature, body) {

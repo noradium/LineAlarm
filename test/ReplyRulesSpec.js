@@ -1,7 +1,7 @@
 "use strict";
 const assert = require('power-assert');
-const ReplyGenerator = require('../model/ReplyGenerator');
-const ReplyRules = require('../model/ReplyRules');
+const ReplyGenerator = require('../lib/model/ReplyGenerator');
+const ReplyRules = require('../lib/model/ReplyRules');
 const replyRules = (new ReplyRules()).rules();
 
 describe('ReplyRules', () => {
