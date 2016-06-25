@@ -22,9 +22,7 @@ router.post('/', (req, res, next) => {
 
   // リプライ内容がなければ200を返して終了
   if (replyMessages.length === 0) {
-    res.status(200);
-    res.send();
-    res.end();
+    res.status(200).end();
   }
 
   replyMessages.forEach((replyMessage) => {
@@ -34,8 +32,7 @@ router.post('/', (req, res, next) => {
   });
 
   //TODO: LineBotAPI のレスポンス待つ必要はないので、その辺なんとかする
-  res.status(200);
-  res.send();
+  res.status(200).end();
 });
 
 function _isValidSignature(signature, body) {
