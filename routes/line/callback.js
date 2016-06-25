@@ -26,9 +26,14 @@ router.post('/', (req, res, next) => {
   }
 
   replyMessages.forEach((replyMessage) => {
-    LineBotAPI.events(replyMessage, (error, response, body) => {
-      // callback で特にやることはない
-    });
+    // devではメッセージ送信せずログ表示するだけ
+    // TODO: 綺麗にかく
+    if (process.env.NODE_ENV === 'dev') {
+      console.log(JSON.stringify(replyMessage));
+      return;
+    }
+
+    LineBotAPI.events(replyMessage, (error, response, body) => {});
   });
 
   //TODO: LineBotAPI のレスポンス待つ必要はないので、その辺なんとかする
