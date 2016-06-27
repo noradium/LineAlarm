@@ -18,22 +18,15 @@ router.post('/', (req, res, next) => {
 
   const reqJson = JSON.parse(req.body.toString('utf8'));
 
-  const replyMessages = (new ReplyGenerator(replyRules)).generate(reqJson['result']);
+  const replyData = (new ReplyGenerator(replyRules)).generate(reqJson['result']);
 
   // リプライ内容がなければ200を返して終了
-  if (replyMessages.length === 0) {
+  if (replyData.length === 0) {
     res.status(200).end();
   }
 
-  replyMessages.forEach((replyMessage) => {
-    // devではメッセージ送信せずログ表示するだけ
-    // TODO: 綺麗にかく
-    if (process.env.NODE_ENV === 'dev') {
-      console.log(JSON.stringify(replyMessage));
-      return;
-    }
-
-    LineBotAPI.events(replyMessage, (error, response, body) => {});
+  replyData.forEach((data) => {
+    LineBotAPI.events(data, (error, response, body) => {});
   });
 
   //TODO: LineBotAPI のレスポンス待つ必要はないので、その辺なんとかする
